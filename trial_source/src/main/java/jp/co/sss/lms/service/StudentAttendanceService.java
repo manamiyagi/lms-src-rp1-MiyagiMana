@@ -72,6 +72,19 @@ public class StudentAttendanceService {
 
 		return attendanceManagementDtoList;
 	}
+	
+	
+	public boolean notEnterCheck(Integer lmsUserId) throws ParseException{
+
+	    // 現在日付を取得 宮城真奈 - Task.25
+	    Date today = attendanceUtil.getTrainingDate();
+
+	    // 過去日の未入力件数を取得 宮城真奈 - Task.25
+	    int countResult = tStudentAttendanceMapper.notEnterCount(lmsUserId, (short) 0, today);
+	   System.out.println("未入力件数" + countResult);
+	    // 未入力が1件以上あればtrue 宮城真奈 - Task.25
+	    return countResult > 0;
+	}
 
 	/**
 	 * 出退勤更新前のチェック
