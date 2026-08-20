@@ -146,5 +146,64 @@ public class AttendanceUtil {
 		}
 		return false;
 	}
+	
+	/**
+	 * 時プルダウン用マップ
+	 * @author 宮城真奈 - Task26
+	 * @return 時マップ
+	 */
+	public LinkedHashMap<Integer, String> setHourMap(){
+		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
+		
+		map.put(null, "");
+		
+		for(int i = 0; i < 24; i++) {
+			map.put(i, String.format("%02d", i));
+		}
+		return map;
+	}
+	
+	/**
+	 * 分プルダウン用
+	 * @author 宮城真奈 - Task26
+	 * @return 分マップ
+	 */
+	public LinkedHashMap<Integer, String> setMinuteMap(){
+		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
+		
+		map.put(null, "");
+		
+		for(int i = 0; i < 60; i++) {
+			map.put(i, String.format("%02d", i));
+		}
+		return map;
+	}
 
+	/**
+	 * 時刻から（時）を抜き取る
+	 * @author 宮城真奈 - Task.26
+	 * @param time 時刻（HH:mm）
+	 * @return 時
+	 */
+	public Integer getHour(String time) {
+		if(time == null || time.isEmpty()) {
+			return null;
+		}
+		return Integer.parseInt(time.substring(0, 2));
+	}
+	
+	/**
+	 * 時刻から（分）を抜き取る
+	 * @author 宮城真奈 - Task.26
+	 * @param time 時刻（HH:mm）
+	 * @return 分
+	 */
+	public Integer getMinute(String time) {
+		if(time == null || time.isEmpty()) {
+			return null;
+		}
+		return Integer.parseInt(time.substring(3, 5));
+	}
+	
 }
+

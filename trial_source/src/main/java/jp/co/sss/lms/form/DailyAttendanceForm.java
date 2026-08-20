@@ -46,5 +46,13 @@ public class DailyAttendanceForm {
 	private String courseName;
 	/** インデックス */
 	private String index;
+	/** 出勤時間（時） 宮城真奈 - Task.26 */
+	private Integer trainingStartTimeHour;
+	/** 出勤時間（分） 宮城真奈 - Task.26 */
+	private Integer trainingStartTimeMinute;
+	/** 退勤時間（時） 宮城真奈 - Task.26 */
+	private Integer trainingEndTimeHour;
+	/** 退勤時間（分） 宮城真奈 - Task.26 */
+	private Integer trainingEndTimeMinute;
 
 }

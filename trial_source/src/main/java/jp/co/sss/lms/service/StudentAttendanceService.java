@@ -232,6 +232,9 @@ public class StudentAttendanceService {
 		attendanceForm.setUserName(loginUserDto.getUserName());
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
+		//マップ取得 宮城真奈 - Task.26
+		attendanceForm.setHourMap(attendanceUtil.setHourMap());
+		attendanceForm.setMinuteMap(attendanceUtil.setMinuteMap());
 
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
@@ -251,6 +254,29 @@ public class StudentAttendanceService {
 			dailyAttendanceForm
 					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
 			dailyAttendanceForm.setTrainingEndTime(attendanceManagementDto.getTrainingEndTime());
+			
+			//出勤時間を時・分に 宮城真奈 - Task.26
+			String startTime = attendanceManagementDto.getTrainingStartTime();
+			
+			if(startTime != null && !startTime.isEmpty()) {
+				Integer startHour = Integer.parseInt(startTime.substring(0, 2));
+				Integer startMinute = Integer.parseInt(startTime.substring(3, 5));
+				
+				dailyAttendanceForm.setTrainingStartTimeHour(startHour);
+				dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
+			}
+			
+			//退勤時間を時・分に 宮城真奈 - Task.26
+			String endTime = attendanceManagementDto.getTrainingEndTime();
+			
+			if(endTime != null && !endTime.isEmpty()) {
+				Integer endHour = Integer.parseInt(endTime.substring(0, 2));
+				Integer endMinute = Integer.parseInt(endTime.substring(3, 5));
+				
+				dailyAttendanceForm.setTrainingEndTimeHour(endHour);
+				dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
+			}
+			
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
 				dailyAttendanceForm.setBlankTimeValue(String.valueOf(
@@ -289,6 +315,23 @@ public class StudentAttendanceService {
 		// 入力された情報を更新用のエンティティに移し替え
 		Date date = new Date();
 		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
+			
+			//出勤時間を HH:mm 形式に 宮城真奈 - Task.26
+			if(dailyAttendanceForm.getTrainingStartTimeHour() != null
+					&& dailyAttendanceForm.getTrainingStartTimeMinute() != null) {
+				dailyAttendanceForm.setTrainingStartTime(String.format("%02d:%02d", 
+						dailyAttendanceForm.getTrainingStartTimeHour(), 
+						dailyAttendanceForm.getTrainingStartTimeMinute()));
+			}
+			
+			//退勤時間を HH:mm 形式に 宮城真奈 - Task.26
+			if(dailyAttendanceForm.getTrainingEndTimeHour() != null
+					&& dailyAttendanceForm.getTrainingEndTimeMinute() != null) {
+				dailyAttendanceForm.setTrainingEndTime(String.format("%02d:%02d", 
+						dailyAttendanceForm.getTrainingEndTimeHour(), 
+						dailyAttendanceForm.getTrainingEndTimeMinute()));
+			}
+				
 
 			// 更新用エンティティ作成
 			TStudentAttendance tStudentAttendance = new TStudentAttendance();
