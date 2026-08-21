@@ -54,8 +54,8 @@
 								</th:block>
 								<td class="w140">[[${dailyAttendanceForm.dispTrainingDate}]]</td>
 								<td class="w300">[[${dailyAttendanceForm.sectionName}]]</td>
-								
-								<!-- 時のプルダウン表 宮城真奈 - Task26 -->
+
+								<!-- 出勤時間の時のプルダウン表 宮城真奈 - Task26 -->
 								<td class="w120" style="white-space: nowrap;">
 
 									<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|"
@@ -68,7 +68,8 @@
 									</select>
 
 									<span>：</span>
-
+									
+									<!-- 出勤時間の分のプルダウン表 宮城真奈 - Task26 -->
 									<select th:name="|attendanceList[${stat.index}].trainingStartTimeMinute|"
 										class="form-control"
 										style="width: 60px; display: inline-block; padding: 0 2px;">
@@ -77,10 +78,17 @@
 											[[${minute.value}]]
 										</option>
 									</select>
+									
+									<!-- 出勤時間エラー 宮城真奈 - Task27 -->
+									<div >
+										<span class="text-danger" th:errors="*{attendanceList[__${stat.index}__].trainingStartTimeHour}">
+											
+										</span>
+									</div>
 
 								</td>
-								
-								<!-- 分のプルダウン表 宮城真奈 - Task26 -->
+
+								<!-- 退勤時間の時のプルダウン表 宮城真奈 - Task26 -->
 								<td class="w120" style="white-space: nowrap;">
 
 									<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|"
@@ -94,6 +102,7 @@
 
 									<span>：</span>
 
+									<!-- 退勤時間の分のプルダウン表 宮城真奈 - Task26 -->
 									<select th:name="|attendanceList[${stat.index}].trainingEndTimeMinute|"
 										class="form-control"
 										style="width: 60px; display: inline-block; padding: 0 2px;">
@@ -102,6 +111,13 @@
 											[[${minute.value}]]
 										</option>
 									</select>
+									
+									<!-- 退勤時間エラー 宮城真奈 - Task27 -->
+									<div >
+										<span class="text-danger" th:errors="*{attendanceList[__${stat.index}__].trainingEndTimeHour}">
+											
+										</span>
+									</div>
 
 								</td>
 								<td class="w120">
@@ -111,11 +127,27 @@
 											th:selected="${blankTime.key == dailyAttendanceForm.blankTime}">
 											[[${blankTime.value}]]</option>
 									</select>
+									
+									<!-- 中抜け時間エラー 宮城真奈 - Task27 -->
+									<div >
+										<span class="text-danger" th:errors="*{attendanceList[__${stat.index}__].blankTime}">
+											
+										</span>
+									</div>
+									
 								</td>
 								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
 								<td class="w240">
 									<input type="text" th:name="|attendanceList[${stat.index}].note|"
-										th:value="${dailyAttendanceForm.note}" class="form-control"></input>
+										th:value="${dailyAttendanceForm.note}" class="form-control" />
+										
+										<!-- 備考エラー 宮城真奈 - Task27 -->
+									<div >
+										<span class="text-danger" th:errors="*{attendanceList[__${stat.index}__].note}">
+											
+										</span>
+									</div>
+									
 								</td>
 							</tr>
 						</th:block>

@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import jakarta.validation.Valid;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
@@ -134,9 +135,18 @@ public class AttendanceController {
 	 * @throws ParseException
 	 */
 	@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
-	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
+	public String complete(@Valid AttendanceForm attendanceForm, BindingResult result, Model model)
 			throws ParseException {
-
+		
+		
+		//勤怠の入力チェック 宮城真奈 - Task27
+		studentAttendanceService.updateInputCheck(attendanceForm, result);
+		
+		//勤怠の入力チェックでエラーがあった場合 宮城真奈 - Task27
+		if(result.hasErrors()) {
+			return "attendance/update";
+		}
+		
 		// 更新
 		String message = studentAttendanceService.update(attendanceForm);
 		model.addAttribute("message", message);

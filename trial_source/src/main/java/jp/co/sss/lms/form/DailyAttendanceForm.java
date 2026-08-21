@@ -26,7 +26,7 @@ public class DailyAttendanceForm {
 	private String blankTimeValue;
 	/** ステータス */
 	private String status;
-	/** 備考 */
+	/** 備考  */
 	private String note;
 	/** セクション名 */
 	private String sectionName;
