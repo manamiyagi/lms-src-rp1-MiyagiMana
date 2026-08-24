@@ -317,23 +317,6 @@ public class StudentAttendanceService {
 		Date date = new Date();
 		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
 
-			//出勤時間を HH:mm 形式に 宮城真奈 - Task.26
-			if (dailyAttendanceForm.getTrainingStartTimeHour() != null
-					&& dailyAttendanceForm.getTrainingStartTimeMinute() != null) {
-				dailyAttendanceForm.setTrainingStartTime(String.format("%02d:%02d",
-						dailyAttendanceForm.getTrainingStartTimeHour(),
-						dailyAttendanceForm.getTrainingStartTimeMinute()));
-			}
-
-			//退勤時間を HH:mm 形式に 宮城真奈 - Task.26
-			if (dailyAttendanceForm.getTrainingEndTimeHour() != null
-					&& dailyAttendanceForm.getTrainingEndTimeMinute() != null) {
-				dailyAttendanceForm.setTrainingEndTime(String.format("%02d:%02d",
-						dailyAttendanceForm.getTrainingEndTimeHour(),
-						dailyAttendanceForm.getTrainingEndTimeMinute()));
-			}
-
-
 			// 更新用エンティティ作成
 			TStudentAttendance tStudentAttendance = new TStudentAttendance();
 			// 日次勤怠フォームから更新用のエンティティにコピー
@@ -421,9 +404,10 @@ public class StudentAttendanceService {
 								"maxlength", new String[] {"備考", "100"})));
 			}
 
-			//出勤時間のエラーチェック 宮城真奈 - Task27
-			if ((startHour != null && startMinute == null) || (startHour == null && startMinute != null)) {
-
+			//出勤時間の時のエラーチェック 宮城真奈 - Task27
+			if (startHour == null && startMinute != null){
+				
+				//時にエラー
 				result.addError(new FieldError(
 						result.getObjectName(), 
 						"attendanceList[" + 
@@ -431,16 +415,45 @@ public class StudentAttendanceService {
 						"].trainingStartTimeHour", 
 						messageUtil.getMessage(
 								"input.invalid", new String[] {"出勤時間"})));
+				
 			}
 			
-			//退勤時間のエラーチェック 宮城真奈 - Task27
-			if ((endHour != null && endMinute == null) || (endHour == null && endMinute != null)) {
+			//出勤時間の分のエラーチェック 宮城真奈 - Task27
+			if (startHour != null && startMinute == null) {
+				
+				//分にエラー
+				result.addError(new FieldError(
+						result.getObjectName(), 
+						"attendanceList[" + 
+						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
+						"].trainingStartTimeMinute", 
+						messageUtil.getMessage(
+								"input.invalid", new String[] {"出勤時間"})));
+			}
+			
+			//退勤時間の時のエラーチェック 宮城真奈 - Task27
+			if (endHour == null && endMinute != null) {
 
+				//時にエラー
 				result.addError(new FieldError(
 						result.getObjectName(), 
 						"attendanceList[" + 
 						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
 						"].trainingEndTimeHour", 
+						messageUtil.getMessage(
+								"input.invalid", new String[] {"退勤時間"})));
+				
+			}
+			
+			//退勤時間の分のエラーチェック 宮城真奈 - Task27
+			if (endHour != null && endMinute == null) {
+				
+				//分にエラー
+				result.addError(new FieldError(
+						result.getObjectName(), 
+						"attendanceList[" + 
+						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
+						"].trainingEndTimeMinute", 
 						messageUtil.getMessage(
 								"input.invalid", new String[] {"退勤時間"})));
 			}
@@ -481,7 +494,12 @@ public class StudentAttendanceService {
 						}
 			
 			//中抜け時間チェック 宮城真奈 - Task27
-			if(dailyAttendanceForm.getBlankTime() != null) {
+			if(dailyAttendanceForm.getBlankTime() != null 
+					&& startHour != null 
+					&& startMinute != null 
+					&& endHour != null 
+					&& endMinute != null) {
+				
 				//分に変換
 				int workTime = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
 				
@@ -500,5 +518,32 @@ public class StudentAttendanceService {
 			}
 		}
 	
+	/**
+	 * 出勤/退勤時間をHH:mm形式に変換
+	 * 
+	 * @author 宮城真奈
+	 * @param attendanceForm
+	 */
+	public void formatConversion(AttendanceForm attendanceForm) {
+		
+		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
+
+			//出勤時間を HH:mm 形式に 宮城真奈 - Task.26
+			if (dailyAttendanceForm.getTrainingStartTimeHour() != null
+					&& dailyAttendanceForm.getTrainingStartTimeMinute() != null) {
+				dailyAttendanceForm.setTrainingStartTime(String.format("%02d:%02d",
+						dailyAttendanceForm.getTrainingStartTimeHour(),
+						dailyAttendanceForm.getTrainingStartTimeMinute()));
+			}
+
+			//退勤時間を HH:mm 形式に 宮城真奈 - Task.26
+			if (dailyAttendanceForm.getTrainingEndTimeHour() != null
+					&& dailyAttendanceForm.getTrainingEndTimeMinute() != null) {
+				dailyAttendanceForm.setTrainingEndTime(String.format("%02d:%02d",
+						dailyAttendanceForm.getTrainingEndTimeHour(),
+						dailyAttendanceForm.getTrainingEndTimeMinute()));
+			}
+	}
+	}
 
 }
