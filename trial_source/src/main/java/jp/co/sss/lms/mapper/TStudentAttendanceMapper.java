@@ -69,7 +69,7 @@ public interface TStudentAttendanceMapper {
 	 * 過去の勤怠未入力件数取得（task25）
 	 * 
 	 * @author 宮城真奈 - Task.25
-	 * @param lmsUserId
+	 * @param lmsUserId 
 	 * @param deleteFlg
 	 * @param trainingDate
 	 * @return 未入力件数取得結果

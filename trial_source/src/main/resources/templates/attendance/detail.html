@@ -83,13 +83,11 @@
 				$("#now").text('現在の時刻は　' + getClock() + '　です。');
 			}, 1000);
 
-			/* 宮城真奈 - Task.25 */
+			/* 宮城真奈 - Task.25 Thymeleafで置き換えられない場合のfalse */
 			const notEnterCheck = /*[[${notEnterCheck}]]*/ false;
 
-			console.log("notEnterCheck:", notEnterCheck);
-
 			if (notEnterCheck) {
-				alert("過去日に勤怠の未入力があります。");
+				alert("過去日の勤怠に未入力があります。");
 			} 
 		});
 

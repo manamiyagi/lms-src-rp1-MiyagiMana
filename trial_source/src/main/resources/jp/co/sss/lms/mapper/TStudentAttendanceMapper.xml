@@ -86,7 +86,7 @@
 		WHERE student_attendance_id = #{studentAttendanceId}
 	</update>
 
-	<!-- 宮城真奈 - Task.25 -->
+	<!-- 宮城真奈 - Task.25 件数取得なのでIntegerとして受け取る -->
 	<select id="notEnterCount" resultType="java.lang.Integer">
 		 SELECT COUNT(*)
     	FROM t_student_attendance

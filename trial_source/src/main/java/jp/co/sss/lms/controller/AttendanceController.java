@@ -51,9 +51,9 @@ public class AttendanceController {
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
-
+		
 		//過去日の未入力数をカウント 宮城真奈 - Task.25
-		Boolean notEnterCheck = studentAttendanceService.notEnterCheck(loginUserDto.getLmsUserId());
+		Boolean notEnterCheck = studentAttendanceService.notEnterCheck();
 		model.addAttribute("notEnterCheck", notEnterCheck);
 		
 		return "attendance/detail";
