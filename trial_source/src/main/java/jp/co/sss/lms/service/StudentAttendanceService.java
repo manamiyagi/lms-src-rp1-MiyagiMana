@@ -79,7 +79,7 @@ public class StudentAttendanceService {
 	 * 勤怠の過去日に未入力がないかチェック - Task.25
 	 * 
 	 * @author 宮城真奈
-	 * @return return 過去日の未入力が1ケ件以上ならture、未入力がないならfalse
+	 * @return return 過去日の未入力が1件以上ならture、未入力がないならfalse
 	 * @throws ParseException 日付の取得・変換に失敗した場合
 	 */
 	public boolean notEnterCheck() throws ParseException {
