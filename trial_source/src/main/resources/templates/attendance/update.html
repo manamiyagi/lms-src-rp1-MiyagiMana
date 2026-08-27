@@ -36,7 +36,8 @@
 				</th:block>
 
 
-<!--			<div style="height: 700px; overflow-y: auto;">-->
+			<!-- 一覧のスクロール表示 宮城真奈 - Task.29 -->
+			<div style="height: 700px; overflow-y: auto;">
 				<table class="table table-hover dataTable no-footer">
 					<thead>
 						<tr>
@@ -156,7 +157,7 @@
 						</th:block>
 					</tbody>
 				</table>
-<!--				</div>-->
+				</div>
 
 				<div class="form-group">
 					<th:block th:if="${session.loginUserDto.role == '0001'}">
