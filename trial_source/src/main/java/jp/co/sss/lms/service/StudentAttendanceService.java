@@ -83,18 +83,18 @@ public class StudentAttendanceService {
 	 * @throws ParseException 日付の取得・変換に失敗した場合
 	 */
 	public boolean notEnterCheck() throws ParseException {
-		
+
 		//今日の日付を取得 宮城真奈 - Task.25
 		Date today = attendanceUtil.getTrainingDate();
 
 		// LMSのID、削除フラグ、今日の日付を条件に過去日の未入力件数を取得 宮城真奈 - Task.25
 		int countResult = tStudentAttendanceMapper.notEnterCount(
-				loginUserDto.getLmsUserId(),(short) 0, today);
-		
+				loginUserDto.getLmsUserId(), (short) 0, today);
+
 		// 未入力が1件以上あればtrue 宮城真奈 - Task.25
-		if(countResult > 0) {
+		if (countResult > 0) {
 			return true;
-		}else {
+		} else {
 			//未入力件数が0件の場合はfalse 宮城真奈 - Task.25
 			return false;
 		}
@@ -396,7 +396,6 @@ public class StudentAttendanceService {
 	 */
 	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
 
-
 		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
 
 			Integer startHour = dailyAttendanceForm.getTrainingStartTimeHour();
@@ -404,133 +403,167 @@ public class StudentAttendanceService {
 
 			Integer endHour = dailyAttendanceForm.getTrainingEndTimeHour();
 			Integer endMinute = dailyAttendanceForm.getTrainingEndTimeMinute();
-			
+
 			//備考100文字超過チェック 宮城真奈 - Task27
-			if(dailyAttendanceForm.getNote() != null && dailyAttendanceForm.getNote().length() > 100) {
-				
+			if (dailyAttendanceForm.getNote() != null && dailyAttendanceForm.getNote().length() > 100) {
+
 				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].note", 
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].note",
 						messageUtil.getMessage(
-								"maxlength", new String[] {"備考", "100"})));
+								"maxlength", new String[] { "備考", "100" })));
 			}
 
 			//出勤時間の時のエラーチェック 宮城真奈 - Task27
-			if (startHour == null && startMinute != null){
-				
+			if (startHour == null && startMinute != null) {
+
 				//時にエラー
 				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].trainingStartTimeHour", 
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].trainingStartTimeHour",
 						messageUtil.getMessage(
-								"input.invalid", new String[] {"出勤時間"})));
-				
+								"input.invalid", new String[] { "出勤時間" })));
+
 			}
-			
+
 			//出勤時間の分のエラーチェック 宮城真奈 - Task27
 			if (startHour != null && startMinute == null) {
-				
+
 				//分にエラー
 				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].trainingStartTimeMinute", 
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].trainingStartTimeMinute",
 						messageUtil.getMessage(
-								"input.invalid", new String[] {"出勤時間"})));
+								"input.invalid", new String[] { "出勤時間" })));
 			}
-			
+
+
 			//退勤時間の時のエラーチェック 宮城真奈 - Task27
 			if (endHour == null && endMinute != null) {
 
 				//時にエラー
 				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].trainingEndTimeHour", 
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].trainingEndTimeHour",
 						messageUtil.getMessage(
-								"input.invalid", new String[] {"退勤時間"})));
-				
+								"input.invalid", new String[] { "退勤時間" })));
+
 			}
-			
+
 			//退勤時間の分のエラーチェック 宮城真奈 - Task27
 			if (endHour != null && endMinute == null) {
-				
+
 				//分にエラー
 				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].trainingEndTimeMinute", 
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].trainingEndTimeMinute",
 						messageUtil.getMessage(
-								"input.invalid", new String[] {"退勤時間"})));
+								"input.invalid", new String[] { "退勤時間" })));
 			}
 			
+
 			//出勤時間なしで退勤時間あり 宮城真奈 - Task27
-			if(startHour == null && startMinute == null && endHour != null && endMinute != null) {
+			if (startHour == null && startMinute == null && endHour != null && endMinute != null) {
+				
+				String errorMessage = messageUtil.getMessage("attendance.punchInEmpty");
+
+				result.addError(new FieldError(
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].trainingStartTimeHour",errorMessage));
 				
 				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].trainingStartTimeHour", 
-						messageUtil.getMessage("attendance.punchInEmpty")));
+						result.getObjectName(),
+						"attendanceList[" +
+								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+								"].trainingStartTimeMinute",""));
 			}
-			
-			//出勤時間 > 退勤時間 宮城真奈 - Task27
-			if(startHour != null && startMinute != null && endHour != null && endMinute != null) {
-							
-			TrainingTime startTime = new TrainingTime(startHour, startMinute);
-			TrainingTime endTime = new TrainingTime(endHour, endMinute);
-			
-			
-			if(startTime.compareTo(endTime) > 0) {
-				
-				result.addError(new FieldError(
-						result.getObjectName(), 
-						"attendanceList[" + 
-						attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-						"].trainingStartTimeHour", 
-						messageUtil.getMessage(
-								"attendance.trainingTimeRange", 
-								new String[] {String.valueOf(
-										attendanceForm.getAttendanceList().indexOf(
-												dailyAttendanceForm) + 1)})));
-				
+
+			// 出勤時間 > 退勤時間 宮城真奈 - Task27
+			if (startHour != null && startMinute != null
+			        && endHour != null && endMinute != null) {
+
+			    TrainingTime startTime = new TrainingTime(startHour, startMinute);
+			    TrainingTime endTime = new TrainingTime(endHour, endMinute);
+
+			    if (startTime.compareTo(endTime) > 0) {
+
+			        String trainingDate = dailyAttendanceForm.getTrainingDate();
+
+			        String errorMessage = messageUtil.getMessage(
+			                "attendance.trainingTimeRange",
+			                new String[] { trainingDate });
+
+			        // 出勤時間（時）
+			        result.addError(new FieldError(
+			                result.getObjectName(),
+			                "attendanceList[" +
+			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+			                        "].trainingStartTimeHour",
+			                errorMessage));
+
+			        // 出勤時間（分）
+			        result.addError(new FieldError(
+			                result.getObjectName(),
+			                "attendanceList[" +
+			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+			                        "].trainingStartTimeMinute",
+			                ""));
+
+			        // 退勤時間（時）
+			        result.addError(new FieldError(
+			                result.getObjectName(),
+			                "attendanceList[" +
+			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+			                        "].trainingEndTimeHour",
+			                ""));
+
+			        // 退勤時間（分）
+			        result.addError(new FieldError(
+			                result.getObjectName(),
+			                "attendanceList[" +
+			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+			                        "].trainingEndTimeMinute",
+			                ""));
+			    }
 			}
-							
-						}
 			
 			//中抜け時間チェック 宮城真奈 - Task27
-			if(dailyAttendanceForm.getBlankTime() != null 
-					&& startHour != null 
-					&& startMinute != null 
-					&& endHour != null 
+			if (dailyAttendanceForm.getBlankTime() != null
+					&& startHour != null
+					&& startMinute != null
+					&& endHour != null
 					&& endMinute != null) {
-				
+
 				//分に変換
 				int workTime = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-				
-				if(dailyAttendanceForm.getBlankTime() > workTime) {
-					
+
+				if (dailyAttendanceForm.getBlankTime() > workTime) {
+
 					result.addError(new FieldError(
-							result.getObjectName(), 
-							"attendanceList[" + 
-							attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) + 
-							"].blankTime", 
+							result.getObjectName(),
+							"attendanceList[" +
+									attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
+									"].blankTime",
 							messageUtil.getMessage("attendance.blankTimeError")));
-					
+
 				}
 			}
-			
-			}
+
 		}
-	
+	}
+
 	/**
 	 * 出勤/退勤時間をHH:mm形式に変換
 	 * 
@@ -538,7 +571,7 @@ public class StudentAttendanceService {
 	 * @param attendanceForm
 	 */
 	public void formatConversion(AttendanceForm attendanceForm) {
-		
+
 		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
 
 			//出勤時間を HH:mm 形式に 宮城真奈 - Task.26
@@ -556,7 +589,7 @@ public class StudentAttendanceService {
 						dailyAttendanceForm.getTrainingEndTimeHour(),
 						dailyAttendanceForm.getTrainingEndTimeMinute()));
 			}
-	}
+		}
 	}
 
 }

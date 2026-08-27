@@ -29,18 +29,21 @@
 				<!-- 入力エラーがあった場合メッセージ表示 宮城真奈 - Task27 -->
 				<th:block th:if="${#fields.hasErrors('*')}" id="error">
 					<ul style="padding-left: 0; list-style: none;">
-						<li th:each="error : ${#fields.errors('*')}">
+						<li th:each="error : ${#fields.errors('*')}" th:if="${error != ''}">
 							<span th:text="'*' + '&nbsp' + ${error}" class="help-inline error"></span>
 						</li>
 					</ul>
 				</th:block>
 
 
+<!--			<div style="height: 700px; overflow-y: auto;">-->
 				<table class="table table-hover dataTable no-footer">
 					<thead>
 						<tr>
 							<th class="w140">日付</th>
 							<th class="w300">コース内容</th>
+							<!-- 定時ボタン列確保 宮城真奈 - Task.28 -->
+							<th class="w70"></th>
 							<th class="w70">出勤</th>
 							<th class="w70">退勤</th>
 							<th class="w80">中抜け時間</th>
@@ -67,6 +70,15 @@
 								</th:block>
 								<td class="w140">[[${dailyAttendanceForm.dispTrainingDate}]]</td>
 								<td class="w300">[[${dailyAttendanceForm.sectionName}]]</td>
+								
+								<!-- 定時ボタン 宮城真奈 - Task.28 -->
+								<td class="w70">
+										<button type="button" class="btn btn-success default-button"
+											th:onclick="|setDefaultTime(${stat.index})|">
+											定時
+										</button>
+									</td>
+								
 
 								<!-- 出勤時間の時のプルダウン表 宮城真奈 - Task26 -->
 								<td class="w120" style="white-space: nowrap;">
@@ -122,7 +134,8 @@
 
 								</td>
 								<td class="w120">
-									<select th:name="|attendanceList[${stat.index}].blankTime|" th:class="${#fields.hasErrors('attendanceList[' + stat.index + '].blankTime')} ? 'form-control errorInput' : 'form-control'">
+									<select th:name="|attendanceList[${stat.index}].blankTime|"
+										th:class="${#fields.hasErrors('attendanceList[' + stat.index + '].blankTime')} ? 'form-control errorInput' : 'form-control'">
 										<option th:each="blankTime : ${attendanceForm.blankTimes}"
 											th:value="${blankTime.key}" th:inlne="text" class="form-control"
 											th:selected="${blankTime.key == dailyAttendanceForm.blankTime}">
@@ -134,7 +147,8 @@
 								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
 								<td class="w240">
 									<input type="text" th:name="|attendanceList[${stat.index}].note|"
-										th:value="${dailyAttendanceForm.note}" th:class="${#fields.hasErrors('attendanceList[' + stat.index + '].note')} ? 'form-control errorInput' : 'form-control'" />
+										th:value="${dailyAttendanceForm.note}"
+										th:class="${#fields.hasErrors('attendanceList[' + stat.index + '].note')} ? 'form-control errorInput' : 'form-control'" />
 
 
 								</td>
@@ -142,6 +156,7 @@
 						</th:block>
 					</tbody>
 				</table>
+<!--				</div>-->
 
 				<div class="form-group">
 					<th:block th:if="${session.loginUserDto.role == '0001'}">
@@ -158,6 +173,29 @@
 	</div>
 
 	<script type="text/javascript" th:inline="javascript">
+		/* 定時ボタン 宮城真奈 - Task.28 */
+		function setDefaultTime(index) {
+
+        // 出勤時間を09:00に設定
+        document.getElementsByName(
+            "attendanceList[" + index + "].trainingStartTimeHour"
+        )[0].value = "9";
+
+        document.getElementsByName(
+            "attendanceList[" + index + "].trainingStartTimeMinute"
+        )[0].value = "0";
+
+        // 退勤時間を18:00に設定
+        document.getElementsByName(
+            "attendanceList[" + index + "].trainingEndTimeHour"
+        )[0].value = "18";
+
+        document.getElementsByName(
+            "attendanceList[" + index + "].trainingEndTimeMinute"
+        )[0].value = "0";
+    }
+
+		/* 更新確認プルダウン 宮城真奈 - Task.27 */
 		document.getElementById("updateButton").addEventListener("click", function (event) {
 			if (!confirm("更新します。よろしいですか？")) {
 				event.preventDefault();
