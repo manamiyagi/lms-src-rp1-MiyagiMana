@@ -152,7 +152,7 @@ public class AttendanceUtil {
 	 * @author 宮城真奈 - Task26
 	 * @return 時マップ
 	 */
-	public LinkedHashMap<Integer, String> setHourMap(){
+	public LinkedHashMap<Integer, String> getHourMap(){
 		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
 		
 		map.put(null, "");
@@ -168,7 +168,7 @@ public class AttendanceUtil {
 	 * @author 宮城真奈 - Task26
 	 * @return 分マップ
 	 */
-	public LinkedHashMap<Integer, String> setMinuteMap(){
+	public LinkedHashMap<Integer, String> getMinuteMap(){
 		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
 		
 		map.put(null, "");

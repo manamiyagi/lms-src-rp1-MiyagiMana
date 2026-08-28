@@ -152,8 +152,8 @@ public class AttendanceController {
 		if(result.hasErrors()) {
 			
 			//プルダウンを再設定
-			attendanceForm.setHourMap(attendanceUtil.setHourMap());
-			attendanceForm.setMinuteMap(attendanceUtil.setMinuteMap());
+			attendanceForm.setHourMap(attendanceUtil.getHourMap());
+			attendanceForm.setMinuteMap(attendanceUtil.getMinuteMap());
 			attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 			
 			return "attendance/update";

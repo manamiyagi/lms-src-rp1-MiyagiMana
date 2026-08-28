@@ -247,8 +247,8 @@ public class StudentAttendanceService {
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 		//マップ取得 宮城真奈 - Task.26
-		attendanceForm.setHourMap(attendanceUtil.setHourMap());
-		attendanceForm.setMinuteMap(attendanceUtil.setMinuteMap());
+		attendanceForm.setHourMap(attendanceUtil.getHourMap());
+		attendanceForm.setMinuteMap(attendanceUtil.getMinuteMap());
 
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
@@ -272,10 +272,14 @@ public class StudentAttendanceService {
 			//出勤時間を時・分に 宮城真奈 - Task.26
 			String startTime = attendanceManagementDto.getTrainingStartTime();
 
+			//出勤時間がnullか空文字の場合は処理しない
 			if (startTime != null && !startTime.isEmpty()) {
+				//出勤時間の時を取り出す
 				Integer startHour = Integer.parseInt(startTime.substring(0, 2));
+				//出勤時間の分を取り出す
 				Integer startMinute = Integer.parseInt(startTime.substring(3, 5));
 
+				//取り出したものを出勤プルダウンにそれぞれセット
 				dailyAttendanceForm.setTrainingStartTimeHour(startHour);
 				dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
 			}
@@ -283,10 +287,14 @@ public class StudentAttendanceService {
 			//退勤時間を時・分に 宮城真奈 - Task.26
 			String endTime = attendanceManagementDto.getTrainingEndTime();
 
+			//退勤時間がnullか空文字の場合は処理しない
 			if (endTime != null && !endTime.isEmpty()) {
+				//退勤時間の時を取り出す
 				Integer endHour = Integer.parseInt(endTime.substring(0, 2));
+				//退勤時間の分を取り出す
 				Integer endMinute = Integer.parseInt(endTime.substring(3, 5));
 
+				//取り出したものを退勤プルダウンにそれぞれセット
 				dailyAttendanceForm.setTrainingEndTimeHour(endHour);
 				dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
 			}
@@ -388,7 +396,7 @@ public class StudentAttendanceService {
 	}
 
 	/**
-	 * 勤怠入力チェック処理
+	 * 勤怠入力チェック処理 - Task27
 	 * 
 	 * @author 宮城真奈
 	 * @param attendanceForm
@@ -396,17 +404,21 @@ public class StudentAttendanceService {
 	 */
 	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
 
+		//勤怠一覧から1日分の情報を順番に取得してチェック
 		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
 
+			//出勤の時と分を取得
 			Integer startHour = dailyAttendanceForm.getTrainingStartTimeHour();
 			Integer startMinute = dailyAttendanceForm.getTrainingStartTimeMinute();
 
+			//退勤の時と分を取得
 			Integer endHour = dailyAttendanceForm.getTrainingEndTimeHour();
 			Integer endMinute = dailyAttendanceForm.getTrainingEndTimeMinute();
 
 			//備考100文字超過チェック 宮城真奈 - Task27
 			if (dailyAttendanceForm.getNote() != null && dailyAttendanceForm.getNote().length() > 100) {
 
+				//100文字超えている場合の処理
 				result.addError(new FieldError(
 						result.getObjectName(),
 						"attendanceList[" +
@@ -475,14 +487,17 @@ public class StudentAttendanceService {
 			//出勤時間なしで退勤時間あり 宮城真奈 - Task27
 			if (startHour == null && startMinute == null && endHour != null && endMinute != null) {
 				
+				//エラーメッセージ取得
 				String errorMessage = messageUtil.getMessage("attendance.punchInEmpty");
 
+				//時にエラー
 				result.addError(new FieldError(
 						result.getObjectName(),
 						"attendanceList[" +
 								attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
 								"].trainingStartTimeHour",errorMessage));
 				
+				//分にエラー
 				result.addError(new FieldError(
 						result.getObjectName(),
 						"attendanceList[" +
@@ -494,13 +509,17 @@ public class StudentAttendanceService {
 			if (startHour != null && startMinute != null
 			        && endHour != null && endMinute != null) {
 
+				//出退勤それぞれオブジェクトに変換
 			    TrainingTime startTime = new TrainingTime(startHour, startMinute);
 			    TrainingTime endTime = new TrainingTime(endHour, endMinute);
 
+			    //0より大きい場合出勤時間が退勤時間より後になる
 			    if (startTime.compareTo(endTime) > 0) {
 
+			    	//現在の日付を取得
 			        String trainingDate = dailyAttendanceForm.getTrainingDate();
 
+			        //エラーメッセージ取得
 			        String errorMessage = messageUtil.getMessage(
 			                "attendance.trainingTimeRange",
 			                new String[] { trainingDate });
@@ -510,32 +529,28 @@ public class StudentAttendanceService {
 			                result.getObjectName(),
 			                "attendanceList[" +
 			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
-			                        "].trainingStartTimeHour",
-			                errorMessage));
+			                        "].trainingStartTimeHour",errorMessage));
 
 			        // 出勤時間（分）
 			        result.addError(new FieldError(
 			                result.getObjectName(),
 			                "attendanceList[" +
 			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
-			                        "].trainingStartTimeMinute",
-			                ""));
+			                        "].trainingStartTimeMinute",""));
 
 			        // 退勤時間（時）
 			        result.addError(new FieldError(
 			                result.getObjectName(),
 			                "attendanceList[" +
 			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
-			                        "].trainingEndTimeHour",
-			                ""));
+			                        "].trainingEndTimeHour", ""));
 
 			        // 退勤時間（分）
 			        result.addError(new FieldError(
 			                result.getObjectName(),
 			                "attendanceList[" +
 			                        attendanceForm.getAttendanceList().indexOf(dailyAttendanceForm) +
-			                        "].trainingEndTimeMinute",
-			                ""));
+			                        "].trainingEndTimeMinute",""));
 			    }
 			}
 			
@@ -549,8 +564,10 @@ public class StudentAttendanceService {
 				//分に変換
 				int workTime = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
 
+				//中抜け時間が業務時間を超えていないかチェック
 				if (dailyAttendanceForm.getBlankTime() > workTime) {
 
+					//超えていた場合の処理
 					result.addError(new FieldError(
 							result.getObjectName(),
 							"attendanceList[" +
@@ -565,7 +582,7 @@ public class StudentAttendanceService {
 	}
 
 	/**
-	 * 出勤/退勤時間をHH:mm形式に変換
+	 * 出勤/退勤時間をHH:mm形式に変換 - Task26
 	 * 
 	 * @author 宮城真奈
 	 * @param attendanceForm
